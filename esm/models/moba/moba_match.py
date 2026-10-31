@@ -4,7 +4,7 @@
 from sqlmodel import SQLModel, Field, Column, Enum
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Relationship
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 
@@ -51,7 +51,7 @@ class MobaMatch(MobaMatchBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     blue_team_id: int = Field(foreign_key="moba_teams.id")
     red_team_id: int = Field(foreign_key="moba_teams.id")
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
     # Relationships
@@ -83,4 +83,4 @@ class MobaMatchUpdate(SQLModel):
     result: Optional[MobaMatchResult] = Field(
         default=None, sa_column=Column(Enum(MobaMatchResult))
     )
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))

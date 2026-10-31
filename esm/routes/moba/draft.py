@@ -1,33 +1,34 @@
 # SPDX-FileCopyrightText: 2025 Pedrenrique G. Guimarães <admin@esportsmanager.net>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
+import json
+from datetime import UTC, datetime
+from typing import Any
+from urllib.parse import parse_qs
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from typing import Dict, Any, List
-from urllib.parse import parse_qs
-from datetime import datetime
-import json
 
-from esm.db import get_session
 from esm.config import FRONTEND_DIR
+from esm.db import get_session
 from esm.models.moba import (
-    MobaMatch,
-    MobaMatchLineup,
-    MobaMatchLineupSlot,
-    MobaMatchDraftSession,
-    MobaMatchDraftAction,
-    MobaMatchDraftSessionPublic,
-    MobaMatchDraftActionPublic,
+    DraftActionType,
     DraftPhase,
     DraftTeamSide,
-    DraftActionType,
     LineupStatus,
     MobaChampion,
     MobaChampionMastery,
-    MobaTeam,
+    MobaMatch,
+    MobaMatchDraftAction,
+    MobaMatchDraftActionPublic,
+    MobaMatchDraftSession,
+    MobaMatchDraftSessionPublic,
+    MobaMatchLineup,
+    MobaMatchLineupSlot,
     MobaPlayer,
+    MobaTeam,
 )
 from frontend.sidebar import sidebar
 
@@ -333,7 +334,7 @@ async def submit_draft_action(
     request: Request,
     session: AsyncSession = Depends(get_session),
 ):
-    payload: Dict[str, Any] = {}
+    payload: dict[str, Any] = {}
     content_type = request.headers.get("content-type", "")
     if "application/json" in content_type:
         payload = await request.json()
@@ -427,7 +428,7 @@ async def submit_draft_action(
             )
 
         existing_action.player_slot = player_slot
-        draft.updated_at = datetime.now()
+        draft.updated_at = datetime.now(UTC)
         session.add(existing_action)
         session.add(draft)
         await session.commit()
@@ -534,7 +535,7 @@ async def submit_draft_action(
     if next_turn:
         draft.current_turn = next_turn
     
-    draft.updated_at = datetime.now()
+    draft.updated_at = datetime.now(UTC)
     session.add(draft)
     
     await session.commit()

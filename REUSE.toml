@@ -6,6 +6,66 @@ SPDX-FileCopyrightText = "Pedrenrique G. Guimarães"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
+path = "assets/**"
+SPDX-FileCopyrightText = "eSports Manager contributors"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "esm/res/img/players/gumayusi.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/chovy.jpg"
+SPDX-FileCopyrightText = "E레기"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/zeus.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/doran.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/faker.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/faker.png"
+SPDX-FileCopyrightText = "Marie Claire"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "esm/res/img/players/showmaker.png"
+SPDX-FileCopyrightText = "fomos esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/viper.png"
+SPDX-FileCopyrightText = "LoL Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/caps.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/hans-sama.jpg"
+SPDX-FileCopyrightText = "Fomos Esports"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "esm/res/img/players/corejj.jpg"
+SPDX-FileCopyrightText = "YinChannel"
+SPDX-License-Identifier = "CC-BY-2.0"
+
+[[annotations]]
 path = "tests/**"
 SPDX-FileCopyrightText = "Pedrenrique G. Guimarães"
 SPDX-License-Identifier = "GPL-3.0-or-later"

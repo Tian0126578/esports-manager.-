@@ -4,7 +4,7 @@
 from sqlmodel import SQLModel, Field, Column, Enum, Relationship
 from typing import TYPE_CHECKING, Optional
 import enum
-from datetime import datetime
+from datetime import datetime, timezone
 
 if TYPE_CHECKING:
     from esm.models.moba.player_contract import MobaPlayer
@@ -35,7 +35,7 @@ class MobaChampionMastery(SQLModel, table=True):
     player: "MobaPlayer" = Relationship(back_populates="champion_pool")
     champion: "MobaChampion" = Relationship(back_populates="champion_masteries")
 
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -49,7 +49,7 @@ class MobaChampionMasteryCreate(SQLModel):
 class MobaChampionMasteryUpdate(SQLModel):
     tier: Optional[MobaChampionMasteryTier] = Field(default=None)
     points: Optional[int] = Field(default=None)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MobaChampionMasteryPublic(SQLModel):

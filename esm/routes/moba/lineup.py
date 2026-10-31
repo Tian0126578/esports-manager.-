@@ -1,25 +1,26 @@
 # SPDX-FileCopyrightText: 2025 Pedrenrique G. Guimarães <admin@esportsmanager.net>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
-from fastapi import APIRouter, Depends, HTTPException, Request, Body
+from datetime import UTC, datetime
+from typing import Any
+
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from typing import Dict, Any
-from datetime import datetime
 
-from esm.db import get_session
 from esm.config import FRONTEND_DIR
+from esm.db import get_session
 from esm.models.moba import (
+    LineupStatus,
     MobaMatch,
     MobaMatchLineup,
-    MobaMatchLineupSlot,
     MobaMatchLineupPublic,
+    MobaMatchLineupSlot,
     MobaMatchLineupSlotPublic,
-    LineupStatus,
-    MobaTeam,
     MobaPlayer,
     MobaPlayerContract,
+    MobaTeam,
 )
 from frontend.sidebar import sidebar
 
@@ -88,7 +89,7 @@ async def _auto_assign_empty_slots(
         if preferred:
             slot.player_id = preferred.id
             slot.assigned_role = slot.slot_role
-            slot.updated_at = datetime.now()
+            slot.updated_at = datetime.now(UTC)
             session.add(slot)
             assigned_ids.add(preferred.id)
             changed = True
@@ -132,7 +133,7 @@ def _summarize_team_slots(
 
 async def _build_lineup_context(
     match_id: int, session: AsyncSession, request: Request
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     match = await session.get(MobaMatch, match_id)
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
@@ -299,7 +300,7 @@ async def get_lineup(
 async def assign_player_to_slot(
     slot_id: int,
     request: Request,
-    payload: Dict[str, Any] | None = Body(default=None),
+    payload: dict[str, Any] | None = Body(default=None),
     session: AsyncSession = Depends(get_session),
 ):
     slot = await session.get(MobaMatchLineupSlot, slot_id)
@@ -394,12 +395,12 @@ async def assign_player_to_slot(
     
     if from_slot and from_slot.id != slot.id:
         from_slot.player_id = None
-        from_slot.updated_at = datetime.now()
+        from_slot.updated_at = datetime.now(UTC)
         session.add(from_slot)
 
     slot.player_id = player_id
     slot.assigned_role = assigned_role
-    slot.updated_at = datetime.now()
+    slot.updated_at = datetime.now(UTC)
     
     session.add(slot)
     await session.commit()
@@ -476,7 +477,7 @@ async def confirm_lineup(
     else:
         raise HTTPException(status_code=400, detail="Invalid team for this match")
     
-    lineup.updated_at = datetime.now()
+    lineup.updated_at = datetime.now(UTC)
     session.add(lineup)
     await session.commit()
     await session.refresh(lineup)
@@ -518,7 +519,7 @@ async def unlock_lineup(
     else:
         raise HTTPException(status_code=400, detail="Invalid team for this match")
     
-    lineup.updated_at = datetime.now()
+    lineup.updated_at = datetime.now(UTC)
     session.add(lineup)
     await session.commit()
     await session.refresh(lineup)

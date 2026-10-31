@@ -57,11 +57,6 @@ sidebar = {
         "icon": "bi bi-trophy-fill",
         "url": "tournaments",
     },
-    "matches": {
-        "name": "Matches",
-        "icon": "bi bi-controller",
-        "url": "matches",
-    },
 }
 
 current_page = "home"

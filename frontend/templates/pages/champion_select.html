@@ -15,6 +15,7 @@
   id="draft-root"
   class="py-6"
   data-draft-id="{{ draft.id }}"
+  data-match-id="{{ match.id }}"
   data-blue-team-id="{{ match.blue_team_id }}"
   data-red-team-id="{{ match.red_team_id }}"
   x-data="{
@@ -700,11 +701,13 @@
     async function startSimulation() {
       const root = document.getElementById('draft-root');
       const draftId = root?.dataset.draftId;
+      const matchId = Number(root?.dataset.matchId);
       const blueTeamId = Number(root?.dataset.blueTeamId);
       const redTeamId = Number(root?.dataset.redTeamId);
       const composition = await fetch(`/api/moba/draft/session/${draftId}/composition`).then(r => r.json());
       
       const payload = {
+        match_id: matchId,
         team1_id: blueTeamId,
         team2_id: redTeamId,
         team1_roster: composition.blue_team,

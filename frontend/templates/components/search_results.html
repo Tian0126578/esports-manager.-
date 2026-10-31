@@ -13,15 +13,12 @@
       href="/players/{{ p.id }}"
       class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
     >
-      {% if p.image_path %}
       <img
-        src="/api/moba/players/images/{{ p.image_path }}"
+        src="/api/moba/players/images/{{ p.image_path or 'default_player.webp' }}"
         alt="{{ p.nick_name }}"
         class="h-6 w-6 rounded-full mr-2"
+        onerror="this.onerror=null;this.src='/api/moba/players/images/default_player.webp';"
       />
-      {% else %}
-      <div class="h-6 w-6 rounded-full bg-gray-200 dark:bg-gray-700 mr-2"></div>
-      {% endif %}
       <span class="text-gray-800 dark:text-gray-200">{{ p.nick_name }}</span>
       {% if p.role %}
       <span class="ml-2 text-xs text-gray-500 dark:text-gray-400 uppercase"

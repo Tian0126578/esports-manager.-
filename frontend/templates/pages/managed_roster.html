@@ -1,0 +1,73 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- License-Filename: LICENSES/GPL-3.0-or-later -->
+<main class="m-4 space-y-6 sm:m-8">
+  <header class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-widest text-blue-500">
+        {{ managed_team.region or "League" }} · Career roster
+      </p>
+      <h1 class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
+        {{ managed_team.name }}
+      </h1>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        These are the active players contracted to your selected team.
+      </p>
+    </div>
+    <div class="rounded-xl bg-white px-5 py-3 shadow dark:bg-slate-700">
+      <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-300">Transfer budget</p>
+      <p class="text-xl font-bold text-gray-900 dark:text-white">${{ "{:,}".format(career_save.budget) }}</p>
+    </div>
+  </header>
+
+  {% if roster %}
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    {% for entry in roster %}
+    {% set player = entry.player %}
+    <article class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-700">
+      <div class="flex h-56 items-center justify-center bg-gradient-to-br from-slate-800 to-slate-600">
+        {% if entry.image_url %}
+        <img src="{{ entry.image_url }}" alt="{{ player.nick_name }}" class="h-full w-full object-cover" />
+        {% else %}
+        <span class="text-6xl font-black text-white">{{ player.nick_name[:2]|upper }}</span>
+        {% endif %}
+      </div>
+      <div class="space-y-3 p-4">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-300">
+              {{ player.role.value|upper }}
+            </p>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ player.nick_name }}</h2>
+            <p class="text-xs text-gray-500 dark:text-gray-300">
+              {{ player.first_name }} {{ player.last_name }}
+            </p>
+          </div>
+          <span class="rounded-lg bg-slate-100 px-2 py-1 text-sm font-bold text-slate-800 dark:bg-slate-600 dark:text-white">
+            {{ player.overall }} OVR
+          </span>
+        </div>
+        <div>
+          <div class="mb-1 flex justify-between text-xs text-gray-500 dark:text-gray-300">
+            <span>Form</span>
+            <span>{{ player.form }}%</span>
+          </div>
+          <div class="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-600">
+            <div class="h-full rounded-full bg-emerald-500" style="width: {{ player.form }}%"></div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-300">
+          Salary: ${{ "{:,}".format(entry.contract.salary) }} / month
+        </p>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="rounded-xl border border-amber-300 bg-amber-50 p-6 text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100">
+    <h2 class="text-xl font-bold">No active players found for {{ managed_team.name }}</h2>
+    <p class="mt-2">
+      The roster database has no active contracts for this team. Re-import the team roster data to correct it.
+    </p>
+  </section>
+  {% endif %}
+</main>

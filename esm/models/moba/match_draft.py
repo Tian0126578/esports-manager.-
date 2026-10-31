@@ -3,7 +3,7 @@
 # License-Filename: LICENSES/GPL-3.0-or-later
 from sqlmodel import SQLModel, Field, Column, Enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 
@@ -38,7 +38,7 @@ class MobaMatchDraftSession(SQLModel, table=True):
     )
     turn_number: int = Field(default=0)
     is_completed: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -52,7 +52,7 @@ class MobaMatchDraftAction(SQLModel, table=True):
     champion_id: int = Field(foreign_key="moba_champions.id")
     player_slot: Optional[str] = Field(default=None)
     order_index: int = Field(index=True)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MobaMatchDraftSessionPublic(SQLModel):

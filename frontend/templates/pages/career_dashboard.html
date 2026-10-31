@@ -1,0 +1,193 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- License-Filename: LICENSES/GPL-3.0-or-later -->
+<main class="m-4 space-y-6 sm:m-8">
+  <header class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-widest text-blue-500">
+        {{ managed_team.region or "Independent" }} · Career Mode
+      </p>
+      <h1 class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
+        {{ managed_team.name }}
+      </h1>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        Season {{ game_date[:4] }} · {{ league_name }}
+      </p>
+    </div>
+    <a href="/page/roster"
+      class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500">
+      Manage roster
+    </a>
+  </header>
+
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="rounded-xl bg-white p-4 shadow dark:bg-slate-700">
+      <p class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">Regional standing</p>
+      <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ managed_position }}{{ "th" if managed_position not in (1, 2, 3) else ("st" if managed_position == 1 else ("nd" if managed_position == 2 else "rd")) }}</p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">{{ league_name }}</p>
+    </article>
+    <article class="rounded-xl bg-white p-4 shadow dark:bg-slate-700">
+      <p class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">Career record</p>
+      <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ career_save.wins }}-{{ career_save.losses }}</p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">{{ win_rate }}% win rate</p>
+    </article>
+    <article class="rounded-xl bg-white p-4 shadow dark:bg-slate-700">
+      <p class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">Transfer budget</p>
+      <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">${{ "{:,}".format(career_save.budget) }}</p>
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Monthly payroll: ${{ "{:,}".format(monthly_payroll) }}</p>
+    </article>
+    <article class="rounded-xl bg-white p-4 shadow dark:bg-slate-700">
+      <p class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">Career date</p>
+      <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{{ game_date }}</p>
+      <p id="career-fixture-summary" class="mt-1 text-xs text-gray-500 dark:text-gray-300">
+        Loading today's fixture...
+      </p>
+    </article>
+  </section>
+
+  <section class="grid gap-6 xl:grid-cols-2">
+    <article class="rounded-xl bg-white p-5 shadow dark:bg-slate-700">
+      <header class="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Player roster</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-300">Active contracts for {{ managed_team.name }}</p>
+        </div>
+        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-600 dark:text-white">
+          {{ roster|length }} players
+        </span>
+      </header>
+      {% if roster %}
+      <ul class="space-y-3">
+        {% for entry in roster %}
+        {% set player = entry.player %}
+        <li class="flex items-center gap-3 rounded-lg border border-gray-200 p-3 dark:border-slate-500">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200 dark:bg-slate-600">
+            {% if entry.image_url %}
+            <img src="{{ entry.image_url }}" alt="{{ player.nick_name }}" class="h-full w-full object-cover" />
+            {% else %}
+            <span class="font-bold text-slate-700 dark:text-white">{{ player.nick_name[:2]|upper }}</span>
+            {% endif %}
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-gray-900 dark:text-white">{{ player.nick_name }}</p>
+            <p class="text-xs uppercase text-gray-500 dark:text-gray-300">{{ player.role.value }} · {{ player.overall }} OVR</p>
+          </div>
+          <span class="text-sm text-gray-600 dark:text-gray-300">{{ player.form }}% form</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="rounded-lg bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+        No active player contracts are registered for this team.
+      </p>
+      {% endif %}
+    </article>
+
+    <article class="rounded-xl bg-white p-5 shadow dark:bg-slate-700">
+      <header class="mb-4">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ league_name }} standings</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-300">
+          Teams are limited to your selected region. Opponent records reflect matches played in this career.
+        </p>
+      </header>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-gray-200 text-xs uppercase text-gray-500 dark:border-slate-500 dark:text-gray-300">
+            <tr>
+              <th class="px-2 py-3">#</th>
+              <th class="px-2 py-3">Team</th>
+              <th class="px-2 py-3 text-center">W-L</th>
+              <th class="px-2 py-3 text-center">Pts</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-slate-600">
+            {% for row in standings %}
+            <tr class="{% if row.team.id == managed_team.id %}bg-blue-50 font-semibold dark:bg-blue-950/40{% endif %}">
+              <td class="px-2 py-3 text-gray-700 dark:text-gray-200">{{ row.position }}</td>
+              <td class="px-2 py-3 text-gray-900 dark:text-white">
+                {{ row.team.name }}
+                {% if row.team.id == managed_team.id %}
+                <span class="ml-1 text-xs text-blue-600 dark:text-blue-300">You</span>
+                {% endif %}
+              </td>
+              <td class="px-2 py-3 text-center text-gray-700 dark:text-gray-200">{{ row.wins }}-{{ row.losses }}</td>
+              <td class="px-2 py-3 text-center text-gray-700 dark:text-gray-200">{{ row.points }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="px-2 py-6 text-center text-gray-500 dark:text-gray-300">
+                No teams are registered in this region yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="rounded-xl bg-white p-5 shadow dark:bg-slate-700">
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Recent match</h2>
+    {% if recent_match %}
+    <p class="mt-2 text-sm text-gray-700 dark:text-gray-200">
+      <span class="font-bold {% if recent_match.result == 'W' %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+        {{ recent_match.result }}
+      </span>
+      vs. {{ recent_match.opponent }} · {{ recent_match.date }}
+    </p>
+    {% else %}
+    <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">
+      No completed matches in this career yet.
+    </p>
+    {% endif %}
+  </section>
+</main>
+
+<script>
+  window.refreshCareerAction = async function () {
+    const response = await fetch("/api/career");
+    if (!response.ok) {
+      window.setContinueAction({
+        label: "Continue",
+        enabled: false,
+        tooltip: "Unable to load your career schedule.",
+      });
+      return;
+    }
+    const career = await response.json();
+    const fixtureSummary = document.getElementById("career-fixture-summary");
+    const hasMatch = Boolean(career.today_fixture);
+    if (fixtureSummary) {
+      fixtureSummary.textContent = hasMatch
+        ? `Today's opponent: ${career.today_fixture.opponent?.name || "TBD"}`
+        : "No match is scheduled today.";
+    }
+    window.setContinueAction({
+      label: career.next_action,
+      enabled: true,
+      tooltip: "",
+      onClick: hasMatch ? "startCareerNextMatch" : "advanceCareerDay",
+    });
+  };
+
+  window.advanceCareerDay = async function () {
+    const response = await fetch("/api/career/advance-day", { method: "POST" });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      window.alert(result.detail || "Unable to advance the career day.");
+      return;
+    }
+    window.location.reload();
+  };
+
+  window.startCareerNextMatch = async function () {
+    const response = await fetch("/api/career/next-match", { method: "POST" });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      window.alert(result.detail || "Unable to start today's match.");
+      return;
+    }
+    window.location.href = result.lineup_url;
+  };
+
+  window.refreshCareerAction();
+</script>

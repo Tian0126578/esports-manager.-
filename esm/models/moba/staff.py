@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
 import enum
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import Optional, TYPE_CHECKING
 
 from sqlmodel import SQLModel, Field, Relationship, Column, Enum
@@ -39,7 +39,7 @@ class MobaStaff(MobaStaffBase, table=True):
     team_id: Optional[int] = Field(default=None, foreign_key="moba_teams.id")
     team: "MobaTeam" = Relationship(back_populates="staff")
 
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -58,7 +58,7 @@ class MobaStaffUpdate(SQLModel):
     role: Optional[MobaStaffRole] = None
     years_experience: Optional[int] = Field(default=None, ge=0)
     team_id: Optional[int] = None
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MobaStaffPublic(MobaStaffBase):

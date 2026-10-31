@@ -1,6 +1,8 @@
+from collections.abc import AsyncGenerator
+
+from sqlalchemy import inspect
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from typing import AsyncGenerator
 
 
 class DatabaseManager:
@@ -17,6 +19,8 @@ class DatabaseManager:
     async def create_db_and_tables(self):
         async with self.engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
+            if conn.dialect.name == "sqlite":
+                await conn.run_sync(_migrate_sqlite_game_saves)
 
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.async_session_maker() as session:
@@ -26,8 +30,25 @@ class DatabaseManager:
 db_manager: DatabaseManager = None
 
 
+def _migrate_sqlite_game_saves(connection):
+    columns = {
+        column["name"]
+        for column in inspect(connection).get_columns("moba_game_saves")
+    }
+    new_columns = {
+        "wins": "INTEGER NOT NULL DEFAULT 0",
+        "losses": "INTEGER NOT NULL DEFAULT 0",
+        "standings_points": "INTEGER NOT NULL DEFAULT 0",
+    }
+    for name, column_type in new_columns.items():
+        if name not in columns:
+            connection.exec_driver_sql(
+                f'ALTER TABLE moba_game_saves ADD COLUMN "{name}" {column_type}'
+            )
+
+
 async def get_session():
     if not db_manager:
-        raise Exception("Database manager not initialized")
+        raise RuntimeError("Database manager not initialized")
     async for session in db_manager.get_session():
         yield session

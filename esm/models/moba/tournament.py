@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
 from typing import Optional
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from sqlmodel import SQLModel, Field, Column, Enum, DateTime
 from esm.models.tournament import (
     TournamentType,
@@ -36,9 +36,12 @@ class MobaTournament(MobaTournamentBase, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(
-        default_factory=datetime.now, sa_column=Column(DateTime)
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True)),
     )
-    updated_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime))
+    updated_at: Optional[datetime] = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
 
 
 class MobaTournamentPublic(MobaTournamentBase):
@@ -67,4 +70,6 @@ class MobaTournamentUpdate(SQLModel):
     description: Optional[str] = Field(default=None)
     default_color: Optional[str] = Field(default=None)
     logo_path: Optional[str] = Field(default=None)
-    updated_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime))
+    updated_at: Optional[datetime] = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )

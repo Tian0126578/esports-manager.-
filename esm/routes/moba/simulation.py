@@ -4,23 +4,26 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import uuid
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from datetime import UTC, datetime
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from esm.db import get_session
+from esm import db as db_module
 from esm.config import FRONTEND_DIR
-from esm.models.moba import (
-    MobaMatchSimulation,
-    MobaTeamSimulation,
-    MobaMatchDraftAction,
-)
-from frontend.sidebar import sidebar
+from esm.db import get_session
+from esm.models.moba.career import MobaCareerFixture, MobaGameAccount, MobaGameSave
 from esm.models.moba.champion import MobaChampion
+from esm.models.moba.moba_match import (
+    MobaMatch,
+    MobaMatchResult,
+)
 from esm.models.moba.moba_match_simulation import (
     MobaMatchSimulation,
     MobaMatchStatus,
@@ -29,6 +32,10 @@ from esm.models.moba.player import MobaPlayer, MobaPlayerRole
 from esm.models.moba.player_simulation import MobaPlayerSimulation
 from esm.models.moba.team import MobaTeam
 from esm.models.moba.team_simulation import MobaTeamSimulation
+from esm.routes.auth import get_current_account
+from frontend.sidebar import sidebar
+
+logger = logging.getLogger(__name__)
 
 simulation_routes = APIRouter(
     prefix="/simulation",
@@ -44,12 +51,14 @@ templates = Jinja2Templates(directory=templates_dir)
 class SimulationSession:
     sim_id: str
     simulation: MobaMatchSimulation
+    match_id: int | None = None
+    result_persisted: bool = False
     paused: bool = False
     speed: float = 1.0
-    task: Optional[asyncio.Task] = None
+    task: asyncio.Task | None = None
 
 
-_SIMULATIONS: Dict[str, SimulationSession] = {}
+_SIMULATIONS: dict[str, SimulationSession] = {}
 _BASE_TICK_SECONDS = 0.5
 
 
@@ -64,13 +73,62 @@ async def _run_simulation_loop(sess: SimulationSession):
             # Sleep based on speed multiplier
             sleep_for = max(0.05, _BASE_TICK_SECONDS / max(0.25, sess.speed))
             await asyncio.sleep(sleep_for)
+        if sess.simulation.state.status == MobaMatchStatus.COMPLETED:
+            await _persist_match_result(sess)
     except Exception:
-        # Never crash the server due to a simulation error
-        pass
+        logger.exception("Simulation %s failed", sess.sim_id)
+        sess.paused = True
 
 
-def _serialize_simulation(sim: MobaMatchSimulation) -> Dict[str, Any]:
-    def serialize_team(ts: MobaTeamSimulation) -> Dict[str, Any]:
+async def _persist_match_result(sess: SimulationSession) -> None:
+    if sess.match_id is None or sess.result_persisted:
+        return
+    manager = db_module.db_manager
+    if manager is None:
+        logger.error("Cannot persist match %s without an initialized database", sess.match_id)
+        return
+
+    async with manager.async_session_maker() as session:
+        match = await session.get(MobaMatch, sess.match_id)
+        fixture_result = await session.execute(
+            select(MobaCareerFixture).where(
+                MobaCareerFixture.match_id == sess.match_id,
+                MobaCareerFixture.status == "in_progress",
+            )
+        )
+        fixture = fixture_result.scalars().first()
+        if not match or not fixture:
+            logger.error("No active career fixture found for match %s", sess.match_id)
+            return
+
+        match.status = MobaMatchStatus.COMPLETED
+        match.end_time = datetime.now(UTC)
+        winner = sess.simulation.state.winner
+        if winner == 1:
+            match.result = MobaMatchResult.BLUE_WIN
+        elif winner == 2:
+            match.result = MobaMatchResult.RED_WIN
+        else:
+            logger.error("Completed match %s has no winner", sess.match_id)
+            return
+
+        save = await session.get(MobaGameSave, fixture.save_id)
+        if not save:
+            logger.error("No career save found for match %s", sess.match_id)
+            return
+        if match.result == MobaMatchResult.BLUE_WIN:
+            save.wins += 1
+            save.standings_points += 3
+        else:
+            save.losses += 1
+        save.updated_at = datetime.now(UTC)
+        fixture.status = "completed"
+        await session.commit()
+        sess.result_persisted = True
+
+
+def _serialize_simulation(sim: MobaMatchSimulation) -> dict[str, Any]:
+    def serialize_team(ts: MobaTeamSimulation) -> dict[str, Any]:
         return {
             "team": {
                 "id": ts.team.id,
@@ -155,13 +213,9 @@ async def _build_team_sim(
         role = None
         if role_str:
             try:
-                role = MobaPlayerRole(role_str)
-            except Exception:
-                # Attempt uppercase mapping
-                try:
-                    role = MobaPlayerRole[role_str.upper()]
-                except Exception:
-                    role = None
+                role = MobaPlayerRole(role_str.lower())
+            except ValueError:
+                role = None
         ps = MobaPlayerSimulation(player=player, champion=champion, role=role)
         players.append(ps)
     return MobaTeamSimulation(team=team, players=players)
@@ -169,7 +223,9 @@ async def _build_team_sim(
 
 @simulation_routes.post("/create")
 async def create_simulation(
-    payload: Dict[str, Any], session: AsyncSession = Depends(get_session)
+    payload: dict[str, Any],
+    account: Annotated[MobaGameAccount, Depends(get_current_account)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """
     Create a new simulation session.
@@ -191,10 +247,42 @@ async def create_simulation(
     except KeyError:
         raise HTTPException(status_code=400, detail="Invalid roster payload")
 
+    match_id = payload.get("match_id")
+    if match_id is not None:
+        match = await session.get(MobaMatch, int(match_id))
+        save_result = await session.execute(
+            select(MobaGameSave).where(MobaGameSave.account_id == account.id)
+        )
+        save = save_result.scalars().first()
+        fixture_result = await session.execute(
+            select(MobaCareerFixture).where(
+                MobaCareerFixture.match_id == int(match_id),
+                MobaCareerFixture.save_id == (save.id if save else -1),
+                MobaCareerFixture.status == "in_progress",
+            )
+        )
+        fixture = fixture_result.scalars().first()
+        if (
+            not match
+            or not save
+            or not fixture
+            or match.blue_team_id != int(payload["team1_id"])
+            or match.red_team_id != int(payload["team2_id"])
+        ):
+            raise HTTPException(
+                status_code=403, detail="Match is not part of your active career."
+            )
+        match.status = MobaMatchStatus.IN_PROGRESS
+        await session.commit()
+
     sim = MobaMatchSimulation(team1=t1, team2=t2)
     sim.state.update_jungle_objectives()
     sim_id = uuid.uuid4().hex
-    sess = SimulationSession(sim_id=sim_id, simulation=sim)
+    sess = SimulationSession(
+        sim_id=sim_id,
+        simulation=sim,
+        match_id=int(match_id) if match_id is not None else None,
+    )
     _SIMULATIONS[sim_id] = sess
     return {"sim_id": sim_id}
 
@@ -254,6 +342,8 @@ async def set_speed(sim_id: str, speed: float = 1.0):
 @simulation_routes.get("/state/{sim_id}")
 async def get_state(sim_id: str):
     sess = _get_session_or_404(sim_id)
+    if sess.simulation.state.status == MobaMatchStatus.COMPLETED:
+        await _persist_match_result(sess)
     data = _serialize_simulation(sess.simulation)
     data.update({"paused": sess.paused, "speed": sess.speed, "sim_id": sim_id})
     return data
@@ -261,7 +351,7 @@ async def get_state(sim_id: str):
 
 @simulation_routes.get("/view/{sim_id}")
 async def view_simulation(sim_id: str, request: Request):
-    sess = _get_session_or_404(sim_id)
+    _get_session_or_404(sim_id)
 
     context = {
         "request": request,

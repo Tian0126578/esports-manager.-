@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 
 from esm.models.moba.events.event_factory import get_event_from_type
@@ -19,8 +19,8 @@ class MobaMatchSimulation(SQLModel):
     team1: MobaTeamSimulation
     team2: MobaTeamSimulation
     state: "MobaMatchState" = MobaMatchState()
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     started_at: datetime | None = None
     ended_at: datetime | None = None
     events: list["MobaEventBase"] = Field(default_factory=list)

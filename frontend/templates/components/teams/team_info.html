@@ -306,9 +306,10 @@
                     class="h-14 w-14 rounded-full bg-gray-200 dark:bg-slate-700 overflow-hidden mr-3"
                   >
                     <img
-                      src="/api/moba/players/images/{{ player.image_path }}"
+                      src="/api/moba/players/images/{{ player.image_path or 'default_player.webp' }}"
                       alt="{{ player.nick_name }}"
                       class="h-full w-full object-cover"
+                      onerror="this.onerror=null;this.src='/api/moba/players/images/default_player.webp';"
                     />
                   </div>
 

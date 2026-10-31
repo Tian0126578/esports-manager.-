@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2025 Pedrenrique G. Guimarães <admin@esportsmanager.net>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
+import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-import json
 
 ROOT_DIR = Path(__file__).parent.parent
 ESM_DIR = ROOT_DIR / "esm"
@@ -17,7 +17,7 @@ class Config:
     port: int = 0
     api_url: str = ""
 
-    def get_default_config(self) -> dict[str, str]:
+    def get_default_config(self) -> dict[str, str | int]:
         port = 8000
         return {
             "database_url": "sqlite+aiosqlite:///" + os.path.join(ESM_DIR, "app.db"),
@@ -25,7 +25,7 @@ class Config:
             "api_url": "http://localhost:{port}",
         }
 
-    def get_config(self) -> dict[str, str]:
+    def get_config(self) -> dict[str, str | int]:
         return {
             "database_url": self.database_url,
             "port": self.port,
@@ -37,14 +37,16 @@ class Config:
         if config_path.exists():
             with open(config_path, "r") as f:
                 config = json.load(f)
-                self.database_url = config.get("database_url", self.database_url)
-                self.port = config.get("port", self.port)
-                self.api_url = config.get("api_url", self.api_url)
         else:
-            default_config = self.get_default_config()
-            self.database_url = default_config["database_url"]
-            self.port = default_config["port"]
-            self.api_url = default_config["api_url"]
+            config = self.get_default_config()
+
+        self.database_url = os.getenv(
+            "ESM_DATABASE_URL", config.get("database_url", self.database_url)
+        )
+        self.port = int(os.getenv("ESM_PORT", config.get("port", self.port)))
+        self.api_url = os.getenv(
+            "ESM_API_URL", config.get("api_url", self.api_url)
+        )
 
     def save_config(self):
         config_path = ESM_DIR / "config.json"

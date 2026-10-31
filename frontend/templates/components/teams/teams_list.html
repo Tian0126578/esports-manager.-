@@ -178,15 +178,9 @@
           <div class="flex justify-center space-x-1">
             {% for player in team.players %}
             <div class="flex-shrink-0 h-6 w-6 relative">
-              {% if player.image_path %}
-              <img class="h-6 w-6 rounded-full object-cover" src="/api/moba/players/images/{{ player.image_path }}"
-                alt="{{ player.nick_name }}">
-              {% else %}
-              <div
-                class="h-6 w-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-bold">
-                {{ player.nick_name|upper }}
-              </div>
-              {% endif %}
+              <img class="h-6 w-6 rounded-full object-cover" src="/api/moba/players/images/{{ player.image_path or 'default_player.webp' }}"
+                alt="{{ player.nick_name }}"
+                onerror="this.onerror=null;this.src='/api/moba/players/images/default_player.webp';">
               {% set role_colors = {
               'support': 'bg-purple-500',
               'mid': 'bg-blue-500',

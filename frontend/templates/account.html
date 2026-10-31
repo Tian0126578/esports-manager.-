@@ -1,0 +1,113 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- License-Filename: LICENSES/GPL-3.0-or-later -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ "Sign in" if mode == "login" else "Create account" }} - eSports Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/tailwind.css') }}" />
+    <style>
+      @media (max-width: 768px) {
+        body {
+          background-color: #020617;
+        }
+
+        body > main {
+          box-sizing: border-box;
+          width: 92%;
+          max-width: 400px;
+          margin: auto;
+          background-color: #0f172a;
+          color: #f8fafc;
+        }
+
+        main p {
+          color: #cbd5e1;
+        }
+
+        main a {
+          color: #93c5fd;
+        }
+
+        main input {
+          display: block;
+          box-sizing: border-box;
+          width: 100%;
+          color: #f8fafc;
+          background-color: #1e293b;
+          border: 1px solid #475569;
+        }
+
+        main button {
+          width: 100%;
+          color: #fff;
+          background-color: #2563eb;
+        }
+      }
+    </style>
+    <script defer src="{{ url_for('static', path='js/alpine.min.js') }}"></script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
+    <main class="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-8 shadow-xl"
+      x-data="{ error: '', busy: false }">
+      <a href="/" class="text-sm text-blue-300 hover:text-blue-200">eSports Manager</a>
+      <h1 class="mt-5 text-3xl font-bold">{{ "Sign in" if mode == "login" else "Create your account" }}</h1>
+      <p class="mt-2 text-sm text-slate-300">
+        {{ "Continue your saved career." if mode == "login" else "Your career and team choice are saved to this account." }}
+      </p>
+      <form class="mt-6 space-y-4" @submit.prevent="
+        error = '';
+        busy = true;
+        const values = Object.fromEntries(new FormData($el).entries());
+        fetch('/api/auth/{{ mode }}', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values)
+        }).then(async response => {
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            const detail = data.detail;
+            const message = Array.isArray(detail)
+              ? detail.map(item => {
+                  const field = Array.isArray(item.loc) ? item.loc.slice(1).join('.') : '';
+                  return [field, item.msg || 'Invalid value'].filter(Boolean).join(': ');
+                }).join('; ')
+              : typeof detail === 'string'
+                ? detail
+                : 'Unable to continue. Check your username and password.';
+            throw new Error(message);
+          }
+          window.location.href = '/new-game';
+        }).catch(reason => {
+          error = reason.message || 'Unable to continue. Please try again.';
+          busy = false;
+        });
+      ">
+        <label class="block text-sm font-medium">
+          Username
+          <input name="username" required minlength="3" maxlength="32" autocomplete="username"
+            pattern="[\w\-]+" class="mt-1 w-full rounded-lg bg-slate-800 px-3 py-3 outline-none ring-blue-500 focus:ring" />
+        </label>
+        <label class="block text-sm font-medium">
+          Password
+          <input name="password" type="password" required minlength="12" maxlength="128"
+            autocomplete="{{ 'current-password' if mode == 'login' else 'new-password' }}"
+            class="mt-1 w-full rounded-lg bg-slate-800 px-3 py-3 outline-none ring-blue-500 focus:ring" />
+        </label>
+        <p x-show="error" x-text="error" role="alert" class="text-sm text-red-300"></p>
+        <button type="submit" :disabled="busy"
+          class="w-full rounded-lg bg-blue-600 px-4 py-3 font-bold hover:bg-blue-500 disabled:opacity-60">
+          {{ "Sign in" if mode == "login" else "Create account" }}
+        </button>
+      </form>
+      <p class="mt-5 text-center text-sm text-slate-300">
+        {% if mode == "login" %}
+        New here? <a href="/register" class="text-blue-300 hover:underline">Create an account</a>
+        {% else %}
+        Already registered? <a href="/login" class="text-blue-300 hover:underline">Sign in</a>
+        {% endif %}
+      </p>
+    </main>
+  </body>
+</html>

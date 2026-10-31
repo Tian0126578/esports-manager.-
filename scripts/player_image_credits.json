@@ -1,0 +1,952 @@
+{
+  "Kiin": {
+    "image": "kiin.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Canyon": {
+    "image": "canyon.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Chovy": {
+    "image": "chovy.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Ruler": {
+    "image": "ruler.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Duro": {
+    "image": "duro.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Zeus": {
+    "image": "zeus.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Kanavi": {
+    "image": "kanavi.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Zeka": {
+    "image": "zeka.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Gumayusi": {
+    "image": "gumayusi.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Delight": {
+    "image": "delight.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Doran": {
+    "image": "doran.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Oner": {
+    "image": "oner.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Faker": {
+    "image": "faker.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Peyz": {
+    "image": "peyz.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Keria": {
+    "image": "keria.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Siwoo": {
+    "image": "siwoo.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Lucid": {
+    "image": "lucid.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "ShowMaker": {
+    "image": "showmaker.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Smash": {
+    "image": "smash.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Career": {
+    "image": "career.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Breathe": {
+    "image": "breathe.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Tarzan": {
+    "image": "tarzan.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Shanks": {
+    "image": "shanks.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Hope": {
+    "image": "hope.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Kael": {
+    "image": "kael.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Bin": {
+    "image": "bin.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "XUN": {
+    "image": "xun.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Knight": {
+    "image": "knight.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Viper": {
+    "image": "viper.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "ON": {
+    "image": "on.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "369": {
+    "image": "369.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Tian": {
+    "image": "tian.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Creme": {
+    "image": "creme.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "JackeyLove": {
+    "image": "jackeylove.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Zhuo": {
+    "image": "zhuo.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "TheShy": {
+    "image": "theshy.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Wei": {
+    "image": "wei.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Rookie": {
+    "image": "rookie.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "JiaQi": {
+    "image": "jiaqi.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Meiko": {
+    "image": "meiko.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "BrokenBlade": {
+    "image": "brokenblade.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "SkewMond": {
+    "image": "skewmond.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Caps": {
+    "image": "caps.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Hans Sama": {
+    "image": "hanssama.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Labrov": {
+    "image": "labrov.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Myrwn": {
+    "image": "myrwn.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Elyoya": {
+    "image": "elyoya.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Jojopyun": {
+    "image": "jojopyun.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Supa": {
+    "image": "supa.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Alvaro": {
+    "image": "alvaro.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Canna": {
+    "image": "canna.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Yike": {
+    "image": "yike.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "kyeahoo": {
+    "image": "kyeahoo.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Caliste": {
+    "image": "caliste.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Busio": {
+    "image": "busio.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Morgan": {
+    "image": "morgan.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Josedeodo": {
+    "image": "josedeodo.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Quid": {
+    "image": "quid.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Yeon": {
+    "image": "yeon.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "CoreJJ": {
+    "image": "corejj.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Thanatos": {
+    "image": "thanatos.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Blaber": {
+    "image": "blaber.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Loki": {
+    "image": "loki.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Tactical": {
+    "image": "tactical.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Vulcan": {
+    "image": "vulcan.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Dhokla": {
+    "image": "dhokla.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Inspired": {
+    "image": "inspired.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Saint": {
+    "image": "saint.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Berserker": {
+    "image": "berserker.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Isles": {
+    "image": "isles.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Pun": {
+    "image": "pun.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Hizto": {
+    "image": "hizto.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Dire": {
+    "image": "dire.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Eddie": {
+    "image": "eddie.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Bie": {
+    "image": "bie.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Rest": {
+    "image": "rest.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Shad0w": {
+    "image": "shad0w.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "POUT": {
+    "image": "pout.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Doggo": {
+    "image": "doggo.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Kino": {
+    "image": "kino.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Kratos": {
+    "image": "kratos.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Gury": {
+    "image": "gury.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Chika": {
+    "image": "chika.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Harky": {
+    "image": "harky.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "SiuLoong": {
+    "image": "siuloong.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Zest": {
+    "image": "zest.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Curse": {
+    "image": "curse.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Feisty": {
+    "image": "feisty.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Duduhh": {
+    "image": "duduhh.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Ackerman": {
+    "image": "ackerman.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Guigo": {
+    "image": "guigo.png",
+    "role": "Top",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Tatu": {
+    "image": "tatu.png",
+    "role": "Jg",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Tutsz": {
+    "image": "tutsz.png",
+    "role": "Mid",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Ayu": {
+    "image": "ayu.png",
+    "role": "Adc",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  },
+  "Jojo": {
+    "image": "jojo.png",
+    "role": "Sup",
+    "size": [
+      300,
+      400
+    ],
+    "source": "Generated locally with Pillow; no network access",
+    "license": "GPL-3.0-or-later"
+  }
+}

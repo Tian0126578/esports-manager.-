@@ -4,7 +4,7 @@
 import enum
 from sqlmodel import SQLModel, Field, Column, Enum, Relationship
 from typing import Optional, TYPE_CHECKING
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 
 if TYPE_CHECKING:
     from esm.models.moba.champion_mastery import MobaChampionMastery
@@ -86,7 +86,7 @@ class MobaChampion(MobaChampionBase, table=True):
     champion_masteries: list["MobaChampionMastery"] = Relationship(
         back_populates="champion"
     )
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -119,4 +119,4 @@ class MobaChampionUpdate(SQLModel):
     strength: Optional[int] = Field(gt=0, lt=100, default=None)
     image_path: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))

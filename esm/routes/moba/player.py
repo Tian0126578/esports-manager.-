@@ -1,33 +1,34 @@
 # SPDX-FileCopyrightText: 2025 Pedrenrique G. Guimarães <admin@esportsmanager.net>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
-from fastapi import APIRouter, status, Request
-from fastapi.templating import Jinja2Templates
-from esm.config import FRONTEND_DIR, ESM_DIR
-from esm.db import get_session
-from esm.services import serve_image
 from pathlib import Path
-from esm.models.moba.team import MobaTeam, MobaTeamPublic
-from esm.models.moba.player_contract import MobaPlayerContract
-from esm.models.moba.player import (
-    MobaPlayer,
-    MobaPlayerPublic,
-    MobaPlayerCreate,
-    MobaPlayerUpdate,
-    MobaPlayerRole,
-)
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlmodel import select
+
+from esm.config import ESM_DIR, FRONTEND_DIR
+from esm.db import get_session
 from esm.models.moba.champion import MobaChampion
 from esm.models.moba.champion_mastery import (
-    MobaChampionMasteryPublic,
     MobaChampionMastery,
+    MobaChampionMasteryPublic,
     MobaChampionMasteryTier,
     MobaChampionMasteryUpdate,
 )
-from sqlmodel import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-from fastapi import Depends, HTTPException
-from typing import Optional
+from esm.models.moba.player import (
+    MobaPlayer,
+    MobaPlayerCreate,
+    MobaPlayerPublic,
+    MobaPlayerRole,
+    MobaPlayerUpdate,
+)
+from esm.models.moba.player_contract import MobaPlayerContract
+from esm.models.moba.team import MobaTeam, MobaTeamPublic
+from esm.services import serve_image
 
 player_routes = APIRouter(
     prefix="/players",
@@ -37,6 +38,7 @@ player_routes = APIRouter(
 
 templates_dir = FRONTEND_DIR / "templates"
 templates = Jinja2Templates(directory=templates_dir)
+PLAYER_ASSET_IMAGE_DIR = ESM_DIR.parent / "assets" / "images" / "players"
 
 
 class MobaPlayerWithTeam(MobaPlayerPublic):
@@ -289,11 +291,23 @@ async def delete_player(*, session: AsyncSession = Depends(get_session), id: int
 
 @player_routes.get("/images/{filename}")
 async def get_player_image(filename: str):
-    """Serve player images from the res/img/players directory"""
-    image_path = Path(ESM_DIR) / "res" / "img" / "players" / filename
-    default_image = Path(ESM_DIR) / "res" / "img" / "players" / "default_player.webp"
+    """Serve bundled or assets-directory player images."""
+    if Path(filename).name != filename:
+        raise HTTPException(status_code=404, detail="Player image not found")
+    legacy_image_dir = Path(ESM_DIR) / "res" / "img" / "players"
+    asset_image = PLAYER_ASSET_IMAGE_DIR / filename
+    image_path = (
+        asset_image
+        if asset_image.is_file()
+        else legacy_image_dir / filename
+    )
+    default_image = legacy_image_dir / "default_player.webp"
 
-    return serve_image(image_path, default_image)
+    return serve_image(
+        image_path,
+        default_image,
+        cache_control="no-store",
+    )
 
 
 @player_routes.get(

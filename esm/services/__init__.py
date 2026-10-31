@@ -41,7 +41,9 @@ async def serve_image_async(
 
 
 def serve_image(
-    image_path: Path, default_image: Optional[Path]
+    image_path: Path,
+    default_image: Optional[Path],
+    cache_control: str = "public, max-age=86400",
 ) -> Optional[FileResponse]:
     if (
         not image_path.exists()
@@ -56,7 +58,7 @@ def serve_image(
             media_type="image/webp",
             filename=default_image.name,
             headers={
-                "Cache-Control": "public, max-age=86400",  # Cache for 1 day
+                "Cache-Control": cache_control,
                 "ETag": default_image.name,  # Add ETag for validation
             },
         )
@@ -69,7 +71,7 @@ def serve_image(
         media_type="image/" + image_path.suffix[1:],
         filename=image_path.name,
         headers={
-            "Cache-Control": "public, max-age=86400",  # Cache for 1 day
+            "Cache-Control": cache_control,
             "ETag": etag,  # Add ETag for validation
         },
     )

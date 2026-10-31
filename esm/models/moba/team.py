@@ -5,7 +5,7 @@ import enum
 from sqlmodel import SQLModel, Field, DateTime, Column
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from esm.services import get_country_code
 from esm.models.moba.player_contract import MobaPlayerContract
 
@@ -45,9 +45,12 @@ class MobaTeam(MobaTeamBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     created_at: datetime = Field(
-        default_factory=datetime.now, sa_column=Column(DateTime)
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True)),
     )
-    updated_at: Optional[datetime] = Field(default=None, sa_column=Column(DateTime))
+    updated_at: Optional[datetime] = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
 
     contracts: list["MobaPlayerContract"] = Relationship(back_populates="team")
     staff: list["MobaStaff"] = Relationship(back_populates="team")
@@ -92,4 +95,4 @@ class MobaTeamUpdate(SQLModel):
     description: Optional[str] = None
     logo_path: Optional[str] = None
     banner_path: Optional[str] = None
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))

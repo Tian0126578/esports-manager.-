@@ -1,0 +1,88 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- License-Filename: LICENSES/GPL-3.0-or-later -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose your team - eSports Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/tailwind.css') }}" />
+    <script defer src="{{ url_for('static', path='js/alpine.min.js') }}"></script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-white">
+    <main class="mx-auto max-w-6xl px-5 py-10" x-data="{
+      teams: [],
+      error: '',
+      loading: true,
+      starting: false,
+      async init() {
+        const response = await fetch('/api/career/teams');
+        if (response.status === 401) { window.location.href = '/login'; return; }
+        if (!response.ok) { this.error = 'Could not load the teams database.'; this.loading = false; return; }
+        this.teams = await response.json();
+        this.loading = false;
+      },
+      async startCareer(teamId) {
+        this.error = '';
+        this.starting = true;
+        const response = await fetch('/api/career', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ team_id: teamId })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const detail = result.detail;
+          this.error = Array.isArray(detail)
+            ? detail.map(item => {
+                const field = Array.isArray(item.loc) ? item.loc.slice(1).join('.') : '';
+                return [field, item.msg || 'Invalid value'].filter(Boolean).join(': ');
+              }).join('; ')
+            : typeof detail === 'string'
+              ? detail
+              : 'Could not start this career. Please refresh and try again.';
+          this.starting = false;
+          return;
+        }
+        window.location.href = '/home';
+      }
+    }">
+      <header class="mb-8 flex items-center justify-between">
+        <div>
+          <p class="text-sm uppercase tracking-widest text-blue-300">New Career</p>
+          <h1 class="mt-2 text-4xl font-black">Choose your team</h1>
+          <p class="mt-2 text-slate-300">Signed in as {{ username }}. Every team in the database is available.</p>
+        </div>
+        <button @click="fetch('/api/auth/logout', { method: 'POST' }).then(() => window.location.href = '/')"
+          class="rounded-lg border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800">Sign out</button>
+      </header>
+      <p x-show="error" x-text="error" role="alert" class="mb-5 rounded-lg bg-red-950 p-4 text-red-200"></p>
+      <p x-show="loading" class="text-slate-300">Loading teams...</p>
+      <section x-show="!loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <template x-for="team in teams" :key="team.id">
+          <article class="rounded-xl border border-slate-700 bg-slate-900 p-5 shadow">
+            <div class="flex items-center gap-4">
+              <div class="flex h-14 w-14 items-center justify-center rounded-full bg-slate-800 text-xl font-black text-blue-300"
+                x-text="team.name.slice(0, 2).toUpperCase()"></div>
+              <div>
+                <h2 class="text-xl font-bold" x-text="team.name"></h2>
+                <p class="text-sm text-slate-400" x-text="team.region || 'Independent'"></p>
+              </div>
+            </div>
+            <div class="mt-5 flex items-center justify-between text-sm text-slate-300">
+              <span>Roster average</span>
+              <span class="font-bold" x-text="team.average_overall + ' OVR'"></span>
+            </div>
+            <button @click="startCareer(team.id)" :disabled="starting"
+              class="mt-5 w-full rounded-lg bg-blue-600 px-4 py-3 font-bold hover:bg-blue-500 disabled:opacity-60">
+              Manage this team
+            </button>
+          </article>
+        </template>
+      </section>
+      <p x-show="!loading && teams.length === 0" class="rounded-xl bg-slate-900 p-6 text-slate-300">
+        No teams are in the database yet. Initialize the game data before starting a career.
+      </p>
+    </main>
+  </body>
+</html>

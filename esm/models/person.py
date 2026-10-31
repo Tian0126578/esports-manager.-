@@ -1,21 +1,25 @@
 # SPDX-FileCopyrightText: 2025 Pedrenrique G. Guimarães <admin@esportsmanager.net>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # License-Filename: LICENSES/GPL-3.0-or-later
-from sqlmodel import SQLModel
 from datetime import date
-from typing import Optional
+
+from sqlmodel import SQLModel
 
 
 class Person(SQLModel):
     first_name: str
     last_name: str
-    date_of_birth: date
-    nick_name: Optional[str] = None
-    nationality: Optional[str] = None
-    bio: Optional[str] = None
-    image_path: Optional[str] = None
+    date_of_birth: date | None = None
+    nick_name: str | None = None
+    nationality: str | None = None
+    bio: str | None = None
+    image_path: str | None = None
 
-    def get_age(self, today: date = date.today()) -> int:
+    def get_age(self, today: date | None = None) -> int | None:
+        if not self.date_of_birth:
+            return None
+        if today is None:
+            today = date.today()
         return (
             today.year
             - self.date_of_birth.year

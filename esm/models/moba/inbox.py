@@ -4,7 +4,7 @@
 from sqlmodel import SQLModel, Field, Column, Enum
 from typing import TYPE_CHECKING, Optional
 import enum
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlmodel import Relationship
 
 
@@ -80,7 +80,7 @@ class MobaInbox(MobaInboxBase, table=True):
     sender_player: Optional["MobaPlayer"] = Relationship()
     sender_staff: Optional["MobaStaff"] = Relationship()
 
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
     read_at: Optional[datetime] = Field(default=None)
     archived_at: Optional[datetime] = Field(default=None)
@@ -111,7 +111,7 @@ class MobaInboxUpdate(SQLModel):
 
     read_at: Optional[datetime] = Field(default=None)
     archived_at: Optional[datetime] = Field(default=None)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MobaInboxPublic(MobaInboxBase):

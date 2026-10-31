@@ -138,12 +138,97 @@ For more detailed setup instructions, including troubleshooting tips, refer to t
 
 To run the main application:
 ```bash
-uv run python esm.py
+uv run uvicorn dev:app --host 0.0.0.0 --port 8000
 ```
 
 Access the web interface at:
 - Frontend: http://localhost:8000
 - API documentation: http://localhost:8000/docs
+
+### Share a temporary public link
+
+To share the local game over a temporary HTTPS Cloudflare Quick Tunnel:
+
+1. Install `cloudflared` (Windows: `winget install --id Cloudflare.cloudflared`;
+   macOS: `brew install cloudflared`; Linux: use the
+   [official installation guide](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)).
+2. Stop any game server already using port `8000`.
+3. Run `uv run python run_public.py` from the project directory.
+4. Share the `trycloudflare.com` HTTPS URL printed by the script. Keep the
+   terminal open while people are playing; press Ctrl+C to stop both the tunnel
+   and web server.
+
+This temporary link is public: anyone who receives it can open the game, and
+the tunnel only stays available while your computer and this process are
+running. Do not share it for a database containing private or sensitive data.
+Cloudflare Quick Tunnels are intended for development/testing, not as a
+production hosting service. The server binds to `0.0.0.0:8000` for this launch;
+the tunnel connects to its local `127.0.0.1:8000` address.
+The project declares Python dependencies in `pyproject.toml` and `uv.lock`;
+the launcher uses Python's standard library, so no additional Python tunnel
+package or duplicate `requirements.txt` is needed.
+
+### VPS deployment
+
+The web app runs independently of the desktop wrapper. To build and start it with
+Docker Compose:
+
+```bash
+docker compose up --build -d
+```
+
+The first startup seeds the named SQLite volume from the bundled JSON data. The
+volume persists the game database across container restarts. The default web
+port is `8000`; set `ESM_HTTP_PORT` in the environment to expose another host
+port. Set `ESM_COOKIE_SECURE=true` when serving behind HTTPS. Check readiness at
+`http://localhost:8000/health`.
+
+For a Linux VPS managed by systemd, install the project at
+`/opt/esports-manager`, create the `esports-game` system user, and install its
+dependencies with `uv sync --frozen --no-dev`. Initialize the database as that
+user with the service's database URL:
+
+```bash
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin esports-game
+cd /opt/esports-manager
+uv sync --frozen --no-dev
+sudo -u esports-game env ESM_DATABASE_URL=sqlite+aiosqlite:////var/lib/esports-game/app.db \
+  /opt/esports-manager/.venv/bin/python /opt/esports-manager/scripts/init_db.py
+sudo cp deploy/esports-game.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now esports-game
+```
+
+The service listens on `127.0.0.1:8000`; put a TLS-enabled reverse proxy such as
+Nginx or Caddy in front of it. Inspect service status with
+`sudo systemctl status esports-game` and logs with
+`sudo journalctl -u esports-game`.
+
+Web accounts are created from the landing page. Career records are stored per
+account, and the session cookie is HTTP-only with a 30-day expiry.
+
+### Syncing the Worlds 2026 roster
+
+The supplied roster is maintained in `scripts/worlds_2026_roster.json`. After setting up the project, apply it to the seed files and configured SQLite database with:
+
+```bash
+uv run python scripts/sync_worlds_2026_roster.py
+```
+
+The sync validates the 19 teams and 95 players, keeps prior contracts in the database archive, and uses the bundled default avatar when a player portrait is unavailable. Unknown birth dates remain blank.
+
+To generate matching, role-labeled player avatar PNGs locally without any network access, run:
+
+```bash
+uv run python scripts/generate_player_placeholders.py
+```
+
+The script generates a 300x400 PNG for each of the 95 roster players in
+`assets/images/players/`, with the player's IGN and role. It updates
+`scripts/players.json` and the configured SQLite database to use the normalized
+`ign.png` paths, and records the generated files in
+`scripts/generated_player_placeholders.json`. The game serves these files via
+the existing `/api/moba/players/images/{filename}` endpoint.
 
 ### Development Mode
 

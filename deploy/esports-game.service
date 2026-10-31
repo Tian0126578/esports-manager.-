@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# License-Filename: ../LICENSES/GPL-3.0-or-later
+[Unit]
+Description=eSports Manager web game
+After=network.target
+
+[Service]
+Type=simple
+User=esports-game
+Group=esports-game
+WorkingDirectory=/opt/esports-manager
+StateDirectory=esports-game
+Environment=ESM_DATABASE_URL=sqlite+aiosqlite:////var/lib/esports-game/app.db
+Environment=ESM_COOKIE_SECURE=true
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/esports-manager/.venv/bin/uvicorn dev:app --host 127.0.0.1 --port 8000 --proxy-headers
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/esports-game
+
+[Install]
+WantedBy=multi-user.target

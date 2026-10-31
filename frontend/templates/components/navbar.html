@@ -23,15 +23,10 @@
     </button>
   </div>
 
-  <div
-    class="flex flex-row items-center font-bold text-3xl text-center px-4 self-center"
-  >
-    <img
-      class="w-14"
-      src="{{ url_for('static', path='img/g2-logo-clear.webp') }}"
-    />
-    <div class="ml-4 place-self-center text-gray-600 dark:text-gray-300">
-      G2 Esports
+  <div class="flex flex-row items-center font-bold text-2xl text-center px-4 self-center">
+    <img class="w-12" src="{{ url_for('static', path='img/trophy.svg') }}" alt="eSports Manager" />
+    <div class="ml-3 place-self-center text-gray-600 dark:text-gray-300">
+      {{ managed_team.name if managed_team else "eSports Manager" }}
     </div>
   </div>
 
@@ -82,7 +77,7 @@
     <!-- Date and Week Information -->
     <div class="block sm:hidden items-end justify-center mr-2">
       <div class="text-sm font-medium text-gray-800 dark:text-gray-200">
-        November 15, 2025
+        {{ game_date if game_date else "No active career" }}
       </div>
       <div class="text-xs text-gray-500 dark:text-gray-400">
         Week 25 - World Championship
@@ -127,6 +122,15 @@
       <span class="ml-4 text-lg">
         <i class="bi bi-arrow-right-circle-fill"></i>
       </span>
+    </button>
+    <button
+      type="button"
+      @click="fetch('/api/auth/logout', { method: 'POST' }).then(() => window.location.href = '/')"
+      class="rounded-xl px-3 py-2 text-sm text-gray-600 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-slate-700"
+      aria-label="Sign out"
+      title="Sign out"
+    >
+      <i class="bi bi-box-arrow-right text-lg"></i>
     </button>
   </div>
 </nav>

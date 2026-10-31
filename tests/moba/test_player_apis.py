@@ -1,14 +1,18 @@
 from datetime import date
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from httpx import AsyncClient
-from esm.models.moba.player import (
-    MobaPlayer,
-    MobaPlayerRole,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from esm.models.moba.champion import MobaChampion, MobaChampionRole
 from esm.models.moba.champion_mastery import (
     MobaChampionMasteryTier,
 )
+from esm.models.moba.player import (
+    MobaPlayer,
+    MobaPlayerRole,
+)
+from esm.routes.moba import player as player_route_module
+from scripts.fetch_player_portraits import create_labeled_placeholder
 
 
 async def test_get_players_empty(client: AsyncClient):
@@ -57,6 +61,44 @@ async def test_get_player_by_id_not_found(client: AsyncClient):
     response = await client.get("/api/moba/players/1")
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not found"}
+
+
+async def test_missing_player_image_uses_default_avatar(client: AsyncClient):
+    response = await client.get("/api/moba/players/images/missing-player.webp")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/webp"
+    assert response.content
+
+
+async def test_generated_labeled_player_placeholder_is_served(client: AsyncClient):
+    response = await client.get(
+        "/api/moba/players/images/kanavi-placeholder.png"
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+async def test_player_image_from_assets_directory_is_served(
+    client: AsyncClient, tmp_path, monkeypatch
+):
+    create_labeled_placeholder("Faker", tmp_path / "faker.png")
+    monkeypatch.setattr(player_route_module, "PLAYER_ASSET_IMAGE_DIR", tmp_path)
+
+    response = await client.get("/api/moba/players/images/faker.png")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert response.headers["cache-control"] == "no-store"
+    assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
+async def test_player_image_route_rejects_path_segments(client: AsyncClient):
+    response = await client.get("/api/moba/players/images/%2e%2e%2fsecret.png")
+
+    assert response.status_code == 404
 
 
 async def test_create_player(client: AsyncClient, session: AsyncSession):

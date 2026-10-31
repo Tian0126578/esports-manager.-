@@ -3,7 +3,7 @@
 # License-Filename: LICENSES/GPL-3.0-or-later
 import enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlmodel import SQLModel, Field, Column, Enum
 
@@ -97,4 +97,4 @@ class TournamentUpdate(SQLModel):
     banner_path: Optional[str] = Field(default=None)
     default_color: Optional[str] = Field(default=None)
     logo_path: Optional[str] = Field(default=None)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))

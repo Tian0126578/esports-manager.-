@@ -5,7 +5,7 @@ from sqlmodel import (
     Relationship,
 )
 from typing import Optional, TYPE_CHECKING
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 if TYPE_CHECKING:
     from esm.models.moba.team import MobaTeam
@@ -32,7 +32,7 @@ class MobaPlayerContract(MobaPlayerContractBase, table=True):
     player_id: int = Field(foreign_key="moba_players.id")
     player: "MobaPlayer" = Relationship(back_populates="contracts")
     team: "MobaTeam" = Relationship(back_populates="contracts")
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -51,4 +51,4 @@ class MobaPlayerContractUpdate(SQLModel):
     salary: Optional[int] = None
     is_active: Optional[bool] = None
     leave_date: Optional[date] = None
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))

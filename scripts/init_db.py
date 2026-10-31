@@ -47,6 +47,56 @@ def load_json_file(file_path: str) -> list[dict[str, Any]]:
         return []
 
 
+def player_identity(item: dict[str, Any]) -> tuple[str, str, str]:
+    """Return a stable unique identifier for a player.
+
+    We use full name plus nickname because several rosters contain repeated
+    nicknames across different players, and nicknames alone overwrite the mapping.
+    """
+    return (
+        str(item.get("first_name") or ""),
+        str(item.get("last_name") or ""),
+        str(item.get("nick_name") or ""),
+    )
+
+
+def deduplicate_players(players_data: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Remove repeated roster entries for the same player identity."""
+    seen: set[tuple[str, str, str]] = set()
+    unique_players: list[dict[str, Any]] = []
+
+    for item in players_data:
+        identity = player_identity(item)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        unique_players.append(item)
+
+    return unique_players
+
+
+def build_player_team_map(
+    players_data: list[dict[str, Any]],
+    teams_data: list[dict[str, Any]],
+) -> dict[tuple[str, str, str], str]:
+    """Map players to teams only when the roster data explicitly names a team."""
+    players_data = deduplicate_players(players_data)
+    valid_team_names = {
+        team["name"] for team in teams_data if team.get("name")
+    }
+    assignments = {}
+    for item in players_data:
+        team_name = item.get("team")
+        if not team_name:
+            continue
+        if team_name not in valid_team_names:
+            raise ValueError(
+                f"Unknown team {team_name!r} for player {player_identity(item)!r}"
+            )
+        assignments[player_identity(item)] = team_name
+    return assignments
+
+
 async def add_tournaments(
     session: AsyncSession, data: list[dict[str, Any]]
 ) -> dict[int, MobaTournament]:
@@ -171,7 +221,11 @@ async def add_players(
     player_map = {}  # Map player nicknames to IDs
 
     for item in data:
-        date_of_birth = datetime.strptime(item["date_of_birth"], "%Y-%m-%d").date()
+        date_of_birth = (
+            datetime.strptime(item["date_of_birth"], "%Y-%m-%d").date()
+            if item.get("date_of_birth")
+            else None
+        )
 
         player = MobaPlayer(
             first_name=item["first_name"],
@@ -215,33 +269,41 @@ async def create_player_contracts(
     session: AsyncSession,
     player_map: Dict[int, MobaPlayer],
     team_map: Dict[int, MobaTeam],
+    players_data: List[Dict[str, Any]],
 ) -> None:
-    """Create player contracts based on the team information in players data."""
+    """Create player contracts based on roster team assignments."""
     print("Creating player contracts...")
     contracts_created = 0
+    team_name_by_id = {team.id: team.name for team in team_map.values()}
+    player_team_map = build_player_team_map(players_data, [{"name": team.name} for team in team_map.values()])
 
-    for i, team in enumerate(team_map.values()):
-        team_id = team.id
-        start_index = (i * 5) + 1
-        end_index = start_index + 5
-        player_ids = list(range(start_index, end_index))
+    for player in player_map.values():
+        team_name = player_team_map.get(
+            (player.first_name, player.last_name, player.nick_name)
+        )
+        if not team_name:
+            continue
 
-        for player_id in player_ids:
-            contract = MobaPlayerContract(
-                player_id=player_id,
-                team_id=team_id,
-                start_date=datetime.now().date(),
-                end_date=datetime(2026, 12, 31).date(),
-                salary=500000,
-                is_active=True,
-            )
+        team_id = next(
+            (team.id for team in team_map.values() if team.name == team_name),
+            None,
+        )
+        if team_id is None:
+            continue
 
-            session.add(contract)
-            await session.commit()
-            contracts_created += 1
-            print(
-                f"  Created contract: {player_map[player_id].nick_name} -> {team_map[team_id].name}"
-            )
+        contract = MobaPlayerContract(
+            player_id=player.id,
+            team_id=team_id,
+            start_date=datetime.now().date(),
+            end_date=datetime(2026, 12, 31).date(),
+            salary=500000,
+            is_active=True,
+        )
+
+        session.add(contract)
+        await session.commit()
+        contracts_created += 1
+        print(f"  Created contract: {player.nick_name} -> {team_name_by_id[team_id]}")
 
     print(f"Created {contracts_created} player contracts")
 
@@ -312,6 +374,7 @@ async def main():
     tournaments_data = load_json_file(tournaments_file)
     teams_data = load_json_file(teams_file)
     players_data = load_json_file(players_file)
+    players_data = deduplicate_players(players_data)
     champions_data = load_json_file(champions_file)
 
     # Import data into the database
@@ -322,8 +385,8 @@ async def main():
         champions_map = await add_champions(session, champions_data)
         player_map = await add_players(session, players_data)
 
-        # Create player contracts
-        await create_player_contracts(session, player_map, team_map)
+        # Create player contracts using roster-based team assignments.
+        await create_player_contracts(session, player_map, team_map, players_data)
         await add_champions_to_champion_pool(session, champions_map, player_map)
         break  # Only iterate once
 

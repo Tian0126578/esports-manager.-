@@ -3,7 +3,7 @@
 # License-Filename: LICENSES/GPL-3.0-or-later
 from sqlmodel import SQLModel, Field, Column, Enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 
@@ -22,7 +22,7 @@ class MobaMatchLineupSlot(SQLModel, table=True):
     slot_role: str = Field(index=True)
     assigned_role: Optional[str] = Field(default=None)
     slot_order: int = Field(default=0)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 
@@ -37,7 +37,7 @@ class MobaMatchLineup(SQLModel, table=True):
     red_team_status: LineupStatus = Field(
         sa_column=Column(Enum(LineupStatus)), default=LineupStatus.DRAFT
     )
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
 

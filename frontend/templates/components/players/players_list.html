@@ -22,10 +22,11 @@
       class="relative bg-gradient-to-r {{ img_bg_color }} h-56 w-full overflow-hidden"
     >
       <img
-        src="/api/moba/players/images/{{ player.image_path }}"
+        src="/api/moba/players/images/{{ player.image_path or 'default_player.webp' }}?v=placeholders-v1"
         alt="{{ player.nick_name }}"
         class="w-full h-full object-cover"
         loading="lazy"
+        onerror="this.onerror=null;this.src='/api/moba/players/images/default_player.webp';"
       />
 
       <!-- Role & Region -->
@@ -78,7 +79,7 @@
       >
         <h3 class="text-xl font-semibold truncate">{{ player.nick_name }}</h3>
         <span class="text-sm text-gray-500 dark:text-gray-400"
-          >{{ player.get_age() }} yrs</span
+          >{{ player.get_age() or '—' }}{% if player.get_age() %} yrs{% endif %}</span
         >
       </div>
 
@@ -223,10 +224,10 @@
                 class="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-600"
               >
                 <img
-                  src="/api/moba/players/images/{{ player.image_path }}"
+                  src="/api/moba/players/images/{{ player.image_path or 'default_player.webp' }}?v=placeholders-v1"
                   alt="{{ player.nick_name }}"
                   class="h-full w-full object-cover"
-                  onerror="this.onerror=null; this.src='/static/img/default_player.png';"
+                  onerror="this.onerror=null;this.src='/api/moba/players/images/default_player.webp';"
                 />
               </div>
               <div class="ml-4">
@@ -236,7 +237,7 @@
                   {{ player.nick_name }}
                 </div>
                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ player.get_age() }} years • {{ player.nationality }}
+                  {{ player.get_age() or 'Age unknown' }}{% if player.get_age() %} years{% endif %} • {{ player.nationality or '—' }}
                 </div>
               </div>
             </div>
@@ -277,7 +278,7 @@
             <div class="flex items-center">
               <i class="fi fi-{{ player.get_country_code() }}"></i>
               <span class="text-sm text-gray-900 dark:text-gray-100"
-                >{{ player.region|default('LCK') }}</span
+                >{{ player.team.region if player.team else '—' }}</span
               >
             </div>
           </a>

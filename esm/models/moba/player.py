@@ -5,7 +5,7 @@ from sqlmodel import SQLModel, Field, Column, Enum
 from esm.models.person import Person
 from typing import TYPE_CHECKING, Optional
 import enum
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from sqlmodel import Relationship
 from esm.services import get_country_code
 
@@ -102,7 +102,7 @@ class MobaPlayer(MobaPlayerBase, table=True):
     contracts: list["MobaPlayerContract"] = Relationship(back_populates="player")
 
     champion_pool: list["MobaChampionMastery"] = Relationship(back_populates="player")
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = Field(default=None)
 
     @property
@@ -167,4 +167,4 @@ class MobaPlayerUpdate(SQLModel):
     morale: Optional[int] = Field(default=None, gt=0, lt=100)
     form: Optional[int] = Field(default=None, gt=0, lt=100)
     value: Optional[int] = Field(default=None, gt=0)
-    updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
